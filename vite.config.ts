@@ -18,15 +18,14 @@ export default () => {
 	dotenv.config({ path: './.env' });
 
 	/**
-	 ******************
-	 * RUNTIME OPTIONS
-	 ******************
+	 * Aliased DNS name for the dev server
 	 */
+	const host = process.env.VITE_HOSTNAME;
 
 	/**
 	 * Aliased DNS name for the dev server
 	 */
-	const host = process.env.VITE_HOSTNAME;
+	const useSSL = !!process.env.USE_SSL;
 
 	/**
 	 * Are we running the app in a (Cypress) test harness?
@@ -41,7 +40,7 @@ export default () => {
 	/**
 	 * SSL dev server configuration; uses a self-signed cert, custom DNS name, and proxied API redirects
 	 */
-	const sslConfig = {
+	const sslConfig = () => ({
 		host,
 
 		https: {
@@ -49,9 +48,9 @@ export default () => {
 			key: readFileSync('certs/key.pem'),
 			passphrase: 'client'
 		}
-	};
+	});
 
-	/**w
+	/**
 	 * Standard dev server config for the Cypress test harness; runs on loopback interface
 	 */
 	const testConfig = {
@@ -61,11 +60,6 @@ export default () => {
 		}
 	};
 
-	/**
-	 ******************
-	 * BUILD CONFIG
-	 ******************
-	 */
 	return defineConfig({
 		base: '/',
 
@@ -102,10 +96,6 @@ export default () => {
 				extendRoute(route, parent) {
 					return {
 						...route,
-						beforeEnter: (route: any) => {
-							console.log('wwoo', { route });
-							return route;
-						},
 						meta: {
 							authRequired: true,
 							cache: true
@@ -119,7 +109,6 @@ export default () => {
 			Layouts(),
 
 			/* Auto-import the following modules as compiler macros */
-			// note to dev: this means we never have to import these packages
 			AutoImport({
 				dts: 'src/auto-imports.d.ts',
 				imports: ['vue', 'vue-router']
@@ -174,7 +163,7 @@ export default () => {
 
 		server: {
 			open: false,
-			...(isCypressTestEnv ? testConfig : sslConfig)
+			...(isCypressTestEnv || !useSSL ? testConfig : sslConfig())
 		},
 
 		// @ts-ignore TODO
