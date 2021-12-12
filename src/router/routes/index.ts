@@ -15,7 +15,7 @@ export default [
 	{
 		path: '/',
 		name: 'Layout',
-		component: async () => import('@/views/Layout.vue'),
+		component: async () => import('@/layouts/Layout.vue'),
 
 		meta: {
 			authRequired: true

@@ -1,15 +1,14 @@
-import { createPinia } from 'pinia';
-import { createApp } from 'vue';
-
-import '@/styles/index.css';
+import { ViteSSG } from 'vite-ssg';
+import generatedRoutes from 'virtual:generated-pages';
+import { setupLayouts } from 'virtual:generated-layouts';
 
 import App from './App.vue';
+import '@/styles/index.css';
 
-import { debugPlugin } from '@/plugins';
-import router from '@/router';
+const routes = setupLayouts(generatedRoutes);
 
-const vm = createApp(App)
-	.use(debugPlugin)
-	.use(createPinia())
-	.use(router)
-	.mount('#app');
+export const createApp = ViteSSG(App, { routes }, (ctx) => {
+	Object.values(import.meta.globEager('./plugins/*.ts')).map((i) =>
+		i.install?.(ctx)
+	);
+});

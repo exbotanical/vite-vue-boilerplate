@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
-import type { Plugin, App } from 'vue';
+import type { App } from 'vue';
+import type { ViteSSGContext } from 'vite-ssg';
 
 import pkg from '../../package.json';
 
@@ -47,13 +48,15 @@ function cc(...args: string[]) {
 }
 
 /* Register globally accessible logger service */
-export const debugPlugin: Plugin = {
-	install(app) {
-		debug.apply(app);
+export const install = ({ app }: ViteSSGContext) => {
+	app.use({
+		install(app) {
+			debug.apply(app);
 
-		app.config.globalProperties.$logger = logger;
-		app.provide('$logger', logger);
-	}
+			app.config.globalProperties.$logger = logger;
+			app.provide('$logger', logger);
+		}
+	});
 };
 
 export { logger };

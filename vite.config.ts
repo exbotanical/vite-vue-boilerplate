@@ -2,10 +2,13 @@ import { readFileSync } from 'fs';
 import { resolve } from 'path';
 
 /* Plugins */
-
 import Legacy from '@vitejs/plugin-legacy';
 import Vue from '@vitejs/plugin-vue';
 import jsx from '@vitejs/plugin-vue-jsx';
+import { VitePWA } from 'vite-plugin-pwa';
+import Pages from 'vite-plugin-pages';
+import Layouts from 'vite-plugin-vue-layouts';
+
 import dotenv from 'dotenv';
 
 import AutoImport from 'unplugin-auto-import/vite';
@@ -95,6 +98,26 @@ export default () => {
 			/* Vue */
 			Vue(),
 
+			Pages({
+				extendRoute(route, parent) {
+					return {
+						...route,
+						beforeEnter: (route: any) => {
+							console.log('wwoo', { route });
+							return route;
+						},
+						meta: {
+							authRequired: true,
+							cache: true
+						}
+					};
+				},
+
+				extensions: ['vue', 'md']
+			}),
+
+			Layouts(),
+
 			/* Auto-import the following modules as compiler macros */
 			// note to dev: this means we never have to import these packages
 			AutoImport({
@@ -110,6 +133,35 @@ export default () => {
 			/* Legacy Environment Support */
 			Legacy({
 				targets: ['defaults']
+			}),
+
+			/* PWA Support */
+			VitePWA({
+				registerType: 'autoUpdate',
+				includeAssets: ['favicon.svg', 'robots.txt', 'safari-pinned-tab.svg'],
+				manifest: {
+					name: 'Vitesse',
+					short_name: 'Vitesse',
+					theme_color: '#ffffff',
+					icons: [
+						{
+							src: '/pwa-192x192.png',
+							sizes: '192x192',
+							type: 'image/png'
+						},
+						{
+							src: '/pwa-512x512.png',
+							sizes: '512x512',
+							type: 'image/png'
+						},
+						{
+							src: '/pwa-512x512.png',
+							sizes: '512x512',
+							type: 'image/png',
+							purpose: 'any maskable'
+						}
+					]
+				}
 			})
 		],
 
@@ -121,8 +173,14 @@ export default () => {
 		},
 
 		server: {
-			open: true,
+			open: false,
 			...(isCypressTestEnv ? testConfig : sslConfig)
+		},
+
+		// @ts-ignore TODO
+		ssgOptions: {
+			script: 'async',
+			formatting: 'minify'
 		}
 	});
 };

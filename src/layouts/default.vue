@@ -8,15 +8,12 @@ const uiStore = useUiStore();
 const route = useRoute();
 
 onMounted(() => {
-	console.log('onMounted');
-
 	uiStore.addViewToCache(route);
 });
 
 watch(
 	() => route.name,
 	() => {
-		console.log('watch');
 		uiStore.addViewToCache(route);
 	}
 );
