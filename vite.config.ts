@@ -2,10 +2,10 @@ import { readFileSync } from 'fs';
 import { resolve } from 'path';
 
 /* Plugins */
-
 import Legacy from '@vitejs/plugin-legacy';
 import Vue from '@vitejs/plugin-vue';
 import jsx from '@vitejs/plugin-vue-jsx';
+
 import dotenv from 'dotenv';
 
 import AutoImport from 'unplugin-auto-import/vite';
@@ -15,15 +15,14 @@ export default () => {
 	dotenv.config({ path: './.env' });
 
 	/**
-	 ******************
-	 * RUNTIME OPTIONS
-	 ******************
+	 * Aliased DNS name for the dev server
 	 */
+	const host = process.env.VITE_HOSTNAME;
 
 	/**
 	 * Aliased DNS name for the dev server
 	 */
-	const host = process.env.VITE_HOSTNAME;
+	const useSSL = !!process.env.USE_SSL;
 
 	/**
 	 * Are we running the app in a (Cypress) test harness?
@@ -38,7 +37,7 @@ export default () => {
 	/**
 	 * SSL dev server configuration; uses a self-signed cert, custom DNS name, and proxied API redirects
 	 */
-	const sslConfig = {
+	const sslConfig = () => ({
 		host,
 
 		https: {
@@ -46,9 +45,9 @@ export default () => {
 			key: readFileSync('certs/key.pem'),
 			passphrase: 'client'
 		}
-	};
+	});
 
-	/**w
+	/**
 	 * Standard dev server config for the Cypress test harness; runs on loopback interface
 	 */
 	const testConfig = {
@@ -58,11 +57,6 @@ export default () => {
 		}
 	};
 
-	/**
-	 ******************
-	 * BUILD CONFIG
-	 ******************
-	 */
 	return defineConfig({
 		base: '/',
 
@@ -96,7 +90,6 @@ export default () => {
 			Vue(),
 
 			/* Auto-import the following modules as compiler macros */
-			// note to dev: this means we never have to import these packages
 			AutoImport({
 				dts: 'src/auto-imports.d.ts',
 				imports: ['vue', 'vue-router']
@@ -121,8 +114,8 @@ export default () => {
 		},
 
 		server: {
-			open: true,
-			...(isCypressTestEnv ? testConfig : sslConfig)
+			open: false,
+			...(isCypressTestEnv || !useSSL ? testConfig : sslConfig())
 		}
 	});
 };
