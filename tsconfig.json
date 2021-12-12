@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "module": "ESNext",
+    "target": "ESNext",
+    "lib": ["DOM", "ESNext"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "noUnusedLocals": true,
+    "strictNullChecks": true,
+    "forceConsistentCasingInFileNames": true,
+		"noEmit": true,
+    "types": [
+      "vite/client",
+			"node",
+			"jest"
+    ],
+		"jsx": "preserve",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  },
+	"include": ["src", "test", "*.ts"]
+}

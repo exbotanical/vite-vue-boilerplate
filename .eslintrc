@@ -1,0 +1,10 @@
+{
+  "root": true,
+  "extends": [
+    "@magister_zito",
+    "prettier"
+  ],
+  "ignorePatterns": [
+    "cypress"
+  ]
+}
