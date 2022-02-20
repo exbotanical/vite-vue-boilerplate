@@ -1,61 +1,20 @@
-import { readFileSync } from 'fs';
 import { resolve } from 'path';
 
-/* Plugins */
-import Legacy from '@vitejs/plugin-legacy';
 import Vue from '@vitejs/plugin-vue';
 import jsx from '@vitejs/plugin-vue-jsx';
-
 import dotenv from 'dotenv';
-
 import AutoImport from 'unplugin-auto-import/vite';
 import { defineConfig } from 'vite';
 
+import { isCypressTestEnv, testConfig, sslConfig, useSSL } from './config';
+
+/**
+ * Resolve given directory path as an absolute path relative to the cwd
+ */
+export const resolveAbsolute = (dir: string) => resolve(__dirname, dir);
+
 export default () => {
 	dotenv.config({ path: './.env' });
-
-	/**
-	 * Aliased DNS name for the dev server
-	 */
-	const host = process.env.VITE_HOSTNAME;
-
-	/**
-	 * Aliased DNS name for the dev server
-	 */
-	const useSSL = !!process.env.USE_SSL;
-
-	/**
-	 * Are we running the app in a (Cypress) test harness?
-	 */
-	const isCypressTestEnv = !!process.env.VITE_CY_TEST;
-
-	/**
-	 * Resolve given directory path as an absolute path relative to the cwd
-	 */
-	const resolveAbsolute = (dir: string) => resolve(__dirname, dir);
-
-	/**
-	 * SSL dev server configuration; uses a self-signed cert, custom DNS name, and proxied API redirects
-	 */
-	const sslConfig = () => ({
-		host,
-
-		https: {
-			cert: readFileSync('certs/cert.pem'),
-			key: readFileSync('certs/key.pem'),
-			passphrase: 'client'
-		}
-	});
-
-	/**
-	 * Standard dev server config for the Cypress test harness; runs on loopback interface
-	 */
-	const testConfig = {
-		devServer: {
-			host: 'localhost',
-			port: 3000
-		}
-	};
 
 	return defineConfig({
 		base: '/',
@@ -70,15 +29,6 @@ export default () => {
 				preserveEntrySignatures: 'strict'
 			}
 		},
-
-		// css: {
-		// 	preprocessorOptions: {
-		// 		/* Auto-Import */
-		// 		scss: {
-		// 			additionalData: `@import '@/styles/index';`
-		// 		}
-		// 	}
-		// },
 
 		// pre-bundle the following inclusions
 		optimizeDeps: {
@@ -98,11 +48,6 @@ export default () => {
 			/* JSX Support */
 			jsx({
 				// options are passed on to @vue/babel-plugin-jsx
-			}),
-
-			/* Legacy Environment Support */
-			Legacy({
-				targets: ['defaults']
 			})
 		],
 

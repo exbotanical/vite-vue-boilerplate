@@ -25,7 +25,7 @@ export default [
 	{
 		path: '/:catchAll(.*)*',
 		name: 'NotFound',
-		component: () => import('@/views/PageNotFound.vue'),
+		component: async () => import('@/views/PageNotFound.vue'),
 		meta: {
 			authRequired: true
 		}

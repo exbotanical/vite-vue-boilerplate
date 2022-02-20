@@ -5,11 +5,7 @@ import '@/styles/index.css';
 
 import App from './App.vue';
 
-import { debugPlugin } from '@/plugins';
 import router from '@/router';
+import { debugPlugin } from '@/services';
 
-const vm = createApp(App)
-	.use(debugPlugin)
-	.use(createPinia())
-	.use(router)
-	.mount('#app');
+createApp(App).use(debugPlugin).use(createPinia()).use(router).mount('#app');

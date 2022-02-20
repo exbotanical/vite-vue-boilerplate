@@ -1,7 +1,8 @@
+import { predicate } from './util';
+
 import type { Router } from 'vue-router';
 
-import { logger } from '@/plugins/debug';
-import { predicate } from './util';
+import { logger } from '@/services/logger';
 
 /**
  * Wrapper for all system navigation guards
@@ -11,7 +12,7 @@ export function guards(this: Router) {
 		const routeHas = predicate(to);
 
 		if (routeHas('authRequired')) {
-			logger('matched an `authRequired` route');
+			logger.info('matched an `authRequired` route');
 
 			// auth check logic
 		}

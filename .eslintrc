@@ -1,10 +1,18 @@
 {
   "root": true,
   "extends": [
-    "@magister_zito",
+    "@magister_zito/vue",
     "prettier"
   ],
-  "ignorePatterns": [
-    "cypress"
+  "overrides": [
+		{
+			"files": ["**/*.ts"],
+			"parserOptions": {
+				"project": [
+          "./tsconfig.json",
+          "./cypress/tsconfig.json"
+        ]
+			}
+		}
   ]
 }

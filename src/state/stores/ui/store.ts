@@ -1,10 +1,10 @@
 /* eslint-disable sort-keys */
 import { defineStore } from 'pinia';
 
+import type { NamedRoute, CacheState, UiState } from './types';
 import type { RouteLocationNormalizedLoaded } from 'vue-router';
-import type { INamedRoute, IUiCacheState, IUiState } from './types';
 
-export function cacheState(): IUiCacheState {
+export function cacheState(): CacheState {
 	return {
 		cachedViews: []
 	};
@@ -14,7 +14,7 @@ export function cacheState(): IUiCacheState {
  * The ui store controls app-wide UI state
  */
 export const useUiStore = defineStore('ui', {
-	state: (): IUiState => ({
+	state: (): UiState => ({
 		...cacheState()
 	}),
 
@@ -44,7 +44,7 @@ export const useUiStore = defineStore('ui', {
 		/**
 		 * Remove Vue Router route object from cache list
 		 */
-		removeViewFromCache(view: INamedRoute) {
+		removeViewFromCache(view: NamedRoute) {
 			const idx = this.cachedViews.indexOf(view.name);
 
 			idx > -1 && this.cachedViews.splice(idx, 1);

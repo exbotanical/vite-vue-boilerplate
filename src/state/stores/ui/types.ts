@@ -3,14 +3,14 @@ import type {
 	RouteRecordName
 } from 'vue-router';
 
-export interface IUiCacheState {
+export interface CacheState {
 	cachedViews: RouteRecordName[];
 }
 
-export interface IUiBaseState {}
+export interface BaseState {}
 
-export type IUiState = IUiBaseState & IUiCacheState;
+export type UiState = BaseState & CacheState;
 
-export type INamedRoute = Omit<RouteLocationNormalizedLoaded, 'name'> & {
+export type NamedRoute = Omit<RouteLocationNormalizedLoaded, 'name'> & {
 	name: RouteRecordName;
 };
